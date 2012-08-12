@@ -17,26 +17,12 @@
     return this.each(function( index, element ) {
       var $target = $(this);
 
-      $target.keypress(function( event ) {
-        hinderInput.addChar.call( hinderInput, event, options );
-      }).keydown(function( event ) {
-        hinderInput.addSpecial.call( hinderInput, event, options );
-      }).click(function( event ) {
-        $target.setCaretAtEnd();
-      });
+      $target.keypress( $.proxy( hinderInput.addChar, hinderInput, options ) )
+        .keydown( $.proxy( hinderInput.addSpecial, hinderInput, options ) )
+        .click(function( event ) {
+          $target.setCaretAtEnd();
+        });
     });
-  };
-
-  /**
-   * The default options for hinderInput.
-   **/
-  hinderInput.defaults = {
-    onAdd: function( value ) {
-      return;
-    },
-    onDelete: function() {
-      return;
-    }
   };
 
   /**
@@ -46,7 +32,7 @@
    * @param {object} event The event that triggered the input.
    * @param {object} options The options provided to hinderInput.
    **/
-  hinderInput.addChar = function( event, options ){
+  hinderInput.addChar = function( options, event ){
     var $target = $(event.target),
       keyCode = event.which;
 
@@ -63,22 +49,17 @@
    * @param {object} event The event that triggered the input.
    * @param {object} options The options provided to hinderInput.
    **/
-  hinderInput.addSpecial = function( event, options ) {
+  hinderInput.addSpecial = function( options, event ) {
     var $target = $( event.target ),
       keyCode = event.which;
 
     $target.setCaretAtEnd();
 
-    if ( this.isModifierPresent( event ) || this.isArrowKey( keyCode ) ) {
-      event.preventDefault();
-      return;
-    }
-
     if( keyCode === 8 ) {
       options.onDelete();
     }
-    // TODO refactor
-    else if( !this.isValidChar(keyCode) ) {
+    //TODO more TLC
+    else if( !this.isValidChar(keyCode) || this.isModifierPresent( event ) ) {
       event.preventDefault();
     }
   };
@@ -90,16 +71,9 @@
    * @param {number} keyCode The char code of the character to check.
    **/
   hinderInput.isValidChar = function( keyCode ) {
-    return (keyCode >= 32) && (keyCode <= 126) || (keyCode >= 186) && (keyCode <= 222);
-  };
-
-  /**
-   * Determine if the given key code is an arrow key.
-   *
-   * @param {number} keyCode The char code of the character to check.
-   **/
-  hinderInput.isArrowKey = function( keyCode ) {
-    return [37, 38, 39, 40].indexOf( keyCode ) !== -1;
+    return (keyCode > 31 && keyCode < 37)
+      || (keyCode > 40 && keyCode < 127)
+      || (keyCode > 185 && keyCode < 223);
   };
 
   /**
@@ -110,6 +84,18 @@
    **/
   hinderInput.isModifierPresent = function( event ) {
     return event.altKey || event.ctrlKey || event.metaKey;
+  };
+
+  /**
+   * The default options for hinderInput.
+   **/
+  hinderInput.defaults = {
+    onAdd: function( value ) {
+      return;
+    },
+    onDelete: function() {
+      return;
+    }
   };
 
 })( jQuery );
