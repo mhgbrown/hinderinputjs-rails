@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Hinderinputjs::Rails::VERSION
   s.authors     = ["Morgan Brown"]
   s.email       = ["brown.mhg@gmail.com"]
-  s.homepage    = "https://github.com/discom4rt/hinderinputjs-rails"
+  s.homepage    = "https://github.com/mhgbrown/hinderinputjs-rails"
   s.summary     = "A method for hindering input capabilities within a textarea or text input."
   s.description = "A method for hindering input capabilities within a textarea or text input. Attempts to disallow text selection, cursor placement, and characters outside of the \"normal\" ASCII print character range."
 
